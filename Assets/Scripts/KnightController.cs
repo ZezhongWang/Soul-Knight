@@ -8,10 +8,9 @@ public class KnightController : MonoBehaviour
     public float speed;
 
     [Header("Affiliated")]
-    public GameObject MainWeaponObj;
-    public GameObject SecWeaponObj;
-    public GameObject CurWeaponObj;
-    public GameObject WeaponInFloorObj;
+    public List<GameObject> weaponObj;
+    public GameObject weaponInFloorObj;
+    public int curWeapon;
 
     private Vector2 movement;
     private Animator anim;
@@ -24,16 +23,32 @@ public class KnightController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
-        CurWeaponObj = MainWeaponObj;
-        weapon = CurWeaponObj.GetComponent<Weapon>();
+        weapon = weaponObj[0].GetComponent<Weapon>();
+        curWeapon = 0; 
     }
 
   
     void Update()
     {
         Move();
-        
-        if(Input.GetMouseButton(0))
+
+        // 检测身边是否有枪
+        weaponInFloorObj = null;
+        Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, 1);
+        for (int i = 0; i < cols.Length; i++)
+        {
+            if (cols[i].CompareTag("Weapon"))
+            {
+                weaponInFloorObj = cols[i].gameObject;
+                break;
+            }
+        }
+        leftMouseClick = Input.GetMouseButtonDown(0); 
+        if (weaponInFloorObj != null && leftMouseClick)
+        {
+            GetWeapon();
+        }
+        if (Input.GetMouseButton(0) && weaponInFloorObj == null)
         {
             weapon.Shoot();
         }
@@ -41,25 +56,8 @@ public class KnightController : MonoBehaviour
         {
             SwitchWeapon();
         }
-        leftMouseClick = Input.GetMouseButtonDown(0);
-
-        // 检测身边是否有枪
-        WeaponInFloorObj = null;
-        Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, 1);
-        for (int i = 0; i < cols.Length; i++)
-        {
-            if (cols[i].CompareTag("Weapon"))
-            {
-                WeaponInFloorObj = cols[i].gameObject;
-                break;
-            }
-        }
-        if(WeaponInFloorObj != null && leftMouseClick)
-        {
-            GetWeapon();
-        }
-        
     }
+
     void FixedUpdate()
     {
         rigid.MovePosition(rigid.position + movement * speed * Time.fixedDeltaTime);
@@ -82,37 +80,45 @@ public class KnightController : MonoBehaviour
         weapon.LookAt(mousePosOnWorld);
     }
 
-    void SwitchWeapon()    // 切换主副武器
+    // 切换主副武器
+    void SwitchWeapon()
     {
-        if (SecWeaponObj == null) return;
-        if (CurWeaponObj == MainWeaponObj)
+        if (weaponObj[1] == null) return;
+        switch(curWeapon) {
+            case 0:
+                curWeapon = 1;
+                weaponObj[0].GetComponent<Weapon>().PutAway();
+                weaponObj[1].GetComponent<Weapon>().TakeOut();
+                break;
+            case 1:
+                curWeapon = 0;
+                weaponObj[0].GetComponent<Weapon>().TakeOut();
+                weaponObj[1].GetComponent<Weapon>().PutAway();
+                break;
+        }
+        weapon = weaponObj[curWeapon].GetComponent<Weapon>();
+    }
+
+    // 捡起地面的武器
+    void GetWeapon()      
+    {
+        if (weaponObj[0] != null && weaponObj[1] != null)
         {
-            CurWeaponObj = SecWeaponObj;
-            MainWeaponObj.GetComponent<Weapon>().PutAway();
-            SecWeaponObj.GetComponent<Weapon>().TakeOut();
+            // 放下现有的武器
+            weaponObj[curWeapon].transform.SetParent(weaponInFloorObj.transform.parent);
+            weapon.PutDown();
+            // 捡起新的武器
+            weaponObj[curWeapon] = weaponInFloorObj;
+            weapon = weaponInFloorObj.GetComponent<Weapon>();
         }
         else
         {
-            CurWeaponObj = MainWeaponObj;
-            MainWeaponObj.GetComponent<Weapon>().TakeOut();
-            SecWeaponObj.GetComponent<Weapon>().PutAway();
+            weaponObj[1] = weaponInFloorObj;
+            weaponObj[1].GetComponent<Weapon>().PutAway();
         }
-        weapon = CurWeaponObj.GetComponent<Weapon>();
-    }
-
-    void GetWeapon()      // 捡起地面的武器
-    {
-        if (MainWeaponObj != null && SecWeaponObj != null)
-        {
-            CurWeaponObj.transform.SetParent(WeaponInFloorObj.transform.parent);
-            weapon.PutDown();
-        }
-        else CurWeaponObj = SecWeaponObj;       // 这里有问题，用bool再试下吧
-        CurWeaponObj = WeaponInFloorObj;
-        weapon = CurWeaponObj.GetComponent<Weapon>();
-        weapon.PickUp();
-        CurWeaponObj.transform.SetParent(transform);
-        CurWeaponObj.transform.localPosition = new Vector3(0.13f, -0.34f, 0);
-        CurWeaponObj.transform.localRotation = Quaternion.identity;
+        weaponInFloorObj.GetComponent<Weapon>().PickUp();
+        weaponInFloorObj.transform.SetParent(transform);
+        weaponInFloorObj.transform.localPosition = new Vector3(0.13f, -0.34f, 0);
+        weaponInFloorObj.transform.localRotation = Quaternion.identity;
     }
 }
