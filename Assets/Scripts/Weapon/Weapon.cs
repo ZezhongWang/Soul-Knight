@@ -11,21 +11,26 @@ public class Weapon : MonoBehaviour
     public string role;                 // 谁持有的武器
     public GameObject bulletPrefab;     // 子弹物体
 
-    private float timeStamp;
+    protected float timeStamp;
 
     public void InstantiateWeapon(string role)
     {
         this.role = role;
     }
 
-    public void Shoot()
+    public virtual void Shoot()
     {
         if(Time.time - timeStamp >= shootCD)
         {
             timeStamp = Time.time;
-            GameObject bullet = Instantiate(bulletPrefab, transform.position + transform.right, transform.rotation);
-            bullet.GetComponent<Bullet>().InstantiateBullet(role);
+            InstantiateBullet();
         }
+    }
+
+    public virtual void InstantiateBullet()
+    {
+        GameObject bullet = Instantiate(bulletPrefab, transform.position + transform.right, transform.rotation);
+        bullet.GetComponent<Bullet>().Instantiation(role);
     }
 
     public void LookAt(Vector3 target)

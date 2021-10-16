@@ -29,7 +29,7 @@ public class KnightController : Creature, BeAttack
 
     void Start()
     {
-        hp = 20f;
+        hp = 200f;
         defense = 5f;
         energy = 100f;
         bloodBar.maxValue = hp;

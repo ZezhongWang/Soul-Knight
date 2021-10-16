@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
     public float damage;            //  对敌伤害
     public GameObject hitEffect;    //  命中后的特效
 
-   private void OnTriggerEnter2D(Collider2D collision)
+   protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.transform.tag != role)
         {
@@ -36,7 +36,7 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void InstantiateBullet(string role)
+    public virtual void Instantiation(string role)
     {
         this.role = role;
         GetComponent<Rigidbody2D>().AddForce(transform.right * force, ForceMode2D.Impulse);

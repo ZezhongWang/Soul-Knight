@@ -1,25 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pathfinding;
 
-public class GoblinWitcher : Monster
+public class Goblin_Bow : Monster
 {
-    public bool playerInRoom;
-    public float strollRadius;
-    public float strollCD;
-    public float trackRadius;
-    public float trackCD;
-    public float attackRadius;
-    public float attackCD;
-    public LayerMask layerMask;
-    
     private Animator anim;
     private IntellFindPath intell;
-    private RaycastHit2D hit;
-    private float strollTimeStamp;
-    private float trackTimeStamp;
-    private float attackTimeStamp;
 
     void Start()
     {
@@ -35,9 +21,9 @@ public class GoblinWitcher : Monster
 
     void Update()
     {
-        switch(monsterState)
+        switch (monsterState)
         {
-            case MonsterState.Idle: 
+            case MonsterState.Idle:
                 Idle();
                 break;
             case MonsterState.Track:
@@ -57,7 +43,7 @@ public class GoblinWitcher : Monster
 
     public override void Idle()
     {
-        if(playerInRoom)
+        if (playerInRoom)
         {
             monsterState = MonsterState.Stroll;
             anim.SetBool("isRun", true);
@@ -66,11 +52,11 @@ public class GoblinWitcher : Monster
 
     public override void Stroll()
     {
-        if(RaycastDetection())
+        if (RaycastDetection())
         {
             monsterState = MonsterState.Track;
         }
-        if(Time.time - strollTimeStamp >= strollCD)
+        if (Time.time - strollTimeStamp >= strollCD)
         {
             strollTimeStamp = Time.time;
             var target = transform.position + Random.insideUnitSphere * strollRadius;
@@ -79,24 +65,25 @@ public class GoblinWitcher : Monster
         LookAt(intell.nextPosition);
         intell.moveTo();
 
-        if (intell.reachPathEnd) 
+        if (intell.reachPathEnd)
             anim.SetBool("isRun", false);
-        else 
+        else
             anim.SetBool("isRun", true);
     }
 
+    // 
     public override void Track()
     {
-        if(!RaycastDetection())
+        if (!RaycastDetection())
         {
             monsterState = MonsterState.Stroll;
         }
-        if(Vector3.Distance(transform.position, target.position) <= attackRadius)
+        if (Vector3.Distance(transform.position, target.position) <= attackRadius)
         {
             monsterState = MonsterState.Attack;
             anim.SetBool("isRun", false);
         }
-        if(Time.time - trackTimeStamp >= trackCD)
+        if (Time.time - trackTimeStamp >= trackCD)
         {
             trackTimeStamp = Time.time;
             intell.UpdatePath(target.position);
@@ -107,32 +94,17 @@ public class GoblinWitcher : Monster
 
     public override void Attack()
     {
-        if(Vector3.Distance(transform.position, target.position) > attackRadius)
+        if (Vector3.Distance(transform.position, target.position) > attackRadius)
         {
             monsterState = MonsterState.Track;
             anim.SetBool("isRun", true);
         }
-        if(Time.time - attackTimeStamp >= attackCD)
+        if (Time.time - attackTimeStamp >= attackCD)
         {
             attackTimeStamp = Time.time;
             if (weapon != null)
                 weapon.Shoot();
         }
         LookAt(target.position);
-    }
-
-    public bool RaycastDetection()
-    {
-        hit = Physics2D.Raycast(transform.position + Vector3.up, (target.position - (transform.position + Vector3.up)).normalized, trackRadius, layerMask);
-
-        if (hit.transform != null && hit.transform == target)
-        {
-            Debug.DrawLine(transform.position + Vector3.up, hit.transform.position, Color.red);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 }
