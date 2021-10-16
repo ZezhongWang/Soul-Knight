@@ -5,24 +5,26 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [Header("Attributes")]
-    public float CD;
+    public float shootCD;
+    public float energy;
     public string weaponName;
-    public GameObject bulletPrefab;
+    public string role;                 // 谁持有的武器
+    public GameObject bulletPrefab;     // 子弹物体
 
     private float timeStamp;
 
-    void start()
+    public void InstantiateWeapon(string role)
     {
-        timeStamp = Time.time;
+        this.role = role;
     }
-     
+
     public void Shoot()
     {
-        if(Time.time - timeStamp >= CD)
+        if(Time.time - timeStamp >= shootCD)
         {
             timeStamp = Time.time;
-            GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-            bullet.GetComponent<Bullet>().Instantiation();
+            GameObject bullet = Instantiate(bulletPrefab, transform.position + transform.right, transform.rotation);
+            bullet.GetComponent<Bullet>().InstantiateBullet(role);
         }
     }
 
@@ -42,13 +44,15 @@ public class Weapon : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = true;
     }
 
-    public void PickUp()    // 将武器捡起来
+    public void PickUp(string role)    // 将武器捡起来
     {
         GetComponent<Collider2D>().enabled = false;
+        this.role = role;
     }
 
     public void PutDown()   // 将武器扔下
     {
         GetComponent<Collider2D>().enabled = true;
+        role = "";
     }
 }

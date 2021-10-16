@@ -4,14 +4,27 @@ using UnityEngine;
 
 public enum MonsterState { Idle, Track, Stroll, Attack, Die}
 
-public class Monster : Creature
+/// <summary>
+/// 怪物基类
+/// </summary>
+public class Monster : Creature, BeAttack
 {
-    public MonsterState monsterState;
-    public GameObject weaponObj;
-    public Transform target;
+    public MonsterState monsterState;           
+    public GameObject weaponObj;                // Monster拥有的武器物体
+    public Transform target;                    // 攻击目标
 
-    [HideInInspector]
-    public Weapon weapon;
+    protected Weapon weapon;
+
+    public void BeAttack(float damage)
+    {
+        hp -= damage;
+        if(hp <= 0)
+        {
+            monsterState = MonsterState.Die;
+            GetComponent<Animator>().SetBool("isDead", true);
+            GetComponent<Collider2D>().enabled = false;
+        }
+    }
 
     public override void LookAt(Vector2 target)
     {
@@ -23,29 +36,13 @@ public class Monster : Creature
     }
 
 
-    public virtual void Idle()
-    {
+    public virtual void Idle() { }
 
-    }
-    
-    public virtual void Track()
-    {
+    public virtual void Track() { }
 
-    }
+    public virtual void Stroll() { }
 
-    public virtual void Stroll()
-    {
+    public virtual void Attack() { }
 
-    }
-
-    public virtual void Attack()
-    {
-
-    }
-
-    public virtual void Die()
-    {
-        Destroy(gameObject);
-    }
-
+    public virtual void Die() { }
 }

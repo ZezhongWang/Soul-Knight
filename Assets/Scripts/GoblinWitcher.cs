@@ -23,12 +23,14 @@ public class GoblinWitcher : Monster
 
     void Start()
     {
+        hp = 5f;
         playerInRoom = true;
         strollTimeStamp = -5f;
         monsterState = MonsterState.Idle;
         anim = GetComponent<Animator>();
         intell = GetComponent<IntellFindPath>();
-        if (weaponObj != null) weapon = weaponObj.GetComponent<Weapon>();
+        weapon = weaponObj ? weaponObj.GetComponent<Weapon>() : null;
+        weapon.InstantiateWeapon(transform.tag);
     }
 
     void Update()
@@ -116,6 +118,7 @@ public class GoblinWitcher : Monster
             if (weapon != null)
                 weapon.Shoot();
         }
+        LookAt(target.position);
     }
 
     public bool RaycastDetection()

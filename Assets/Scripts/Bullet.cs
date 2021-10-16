@@ -2,20 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 子弹基类
+/// </summary>
 public class Bullet : MonoBehaviour
 {
-    public float force;
-    
+    public float force;             //  子弹射出的力
+    protected string role;          //  谁射出的子弹
+    public float damage;            //  对敌伤害
+    public GameObject hitEffect;    //  命中后的特效
+
    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.transform.tag == "Wall")
+        if(collision.transform.tag != role)
         {
-            Destroy(gameObject);
+            if(collision.GetComponent<BeAttack>() != null)
+            {
+                collision.GetComponent<BeAttack>().BeAttack(damage);
+                DestroyBullet();
+            }
+            if (collision.transform.tag == "Wall")
+                DestroyBullet();
         }
     }
 
-    public void Instantiation()
+    public void DestroyBullet()
     {
+        Destroy(gameObject);
+        if(hitEffect != null)
+        {
+            GameObject hit = Instantiate(hitEffect, transform.position, Quaternion.identity);
+            Destroy(hit, 0.05f);
+        }
+    }
+
+    public void InstantiateBullet(string role)
+    {
+        this.role = role;
         GetComponent<Rigidbody2D>().AddForce(transform.right * force, ForceMode2D.Impulse);
     }
 }

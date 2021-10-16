@@ -1,29 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class KnightController : MonoBehaviour
+public class KnightController : Creature, BeAttack
 {
     [Header("Attributes")]
+    public float defense;
+    public float energy;
     public float speed;
 
     [Header("Affiliated")]
+    public Slider bloodBar;
+    public Slider defenseBar;
+    public Slider energyBar;
     public List<GameObject> weaponObj;
     public GameObject weaponInFloorObj;
     public int curWeapon;
 
-    private Vector2 movement;
+    // 组件
     private Animator anim;
     private Rigidbody2D rigid;
+
     private Vector3 mousePosOnWorld;
+    private Vector2 movement;
     private Weapon weapon;
     private bool leftMouseClick;
 
     void Start()
     {
+        hp = 20f;
+        defense = 5f;
+        energy = 100f;
+        bloodBar.maxValue = hp;
+        bloodBar.value = hp;
+        defenseBar.maxValue = defense;
+        defenseBar.value = defense;
+        energyBar.maxValue = energy;
+        energyBar.value = energy;
+
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         weapon = weaponObj[0].GetComponent<Weapon>();
+        weapon.InstantiateWeapon(transform.tag);
         curWeapon = 0; 
     }
 
@@ -51,6 +70,8 @@ public class KnightController : MonoBehaviour
         if (Input.GetMouseButton(0) && weaponInFloorObj == null)
         {
             weapon.Shoot();
+            energy -= weapon.energy;
+            energyBar.value = energy;
         }
         if (Input.GetMouseButtonDown(2))     // 滚轮被点击
         {
@@ -102,23 +123,34 @@ public class KnightController : MonoBehaviour
     // 捡起地面的武器
     void GetWeapon()      
     {
-        if (weaponObj[0] != null && weaponObj[1] != null)
+        Weapon weaponFloor = weaponInFloorObj.GetComponent<Weapon>();
+        if (weaponObj[0] != null && weaponObj[1] != null && weaponFloor.role == "")
         {
             // 放下现有的武器
             weaponObj[curWeapon].transform.SetParent(weaponInFloorObj.transform.parent);
             weapon.PutDown();
             // 捡起新的武器
             weaponObj[curWeapon] = weaponInFloorObj;
-            weapon = weaponInFloorObj.GetComponent<Weapon>();
+            weapon = weaponFloor;
         }
         else
         {
             weaponObj[1] = weaponInFloorObj;
-            weaponObj[1].GetComponent<Weapon>().PutAway();
+            weaponFloor.PutAway();
         }
-        weaponInFloorObj.GetComponent<Weapon>().PickUp();
+        weaponFloor.PickUp(transform.tag);
         weaponInFloorObj.transform.SetParent(transform);
         weaponInFloorObj.transform.localPosition = new Vector3(0.13f, -0.34f, 0);
         weaponInFloorObj.transform.localRotation = Quaternion.identity;
+    }
+
+    public void BeAttack(float damage)
+    {
+        hp -= damage;
+        bloodBar.value = hp;
+        if (hp <= 0)
+        {
+            anim.SetBool("isDead", true);
+        }
     }
 }

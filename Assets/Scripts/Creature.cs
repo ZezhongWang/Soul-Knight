@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
-    int Hp;
+    protected float hp;
 
     public virtual void LookAt(Vector2 target)
     {
