@@ -11,13 +11,16 @@ public class GoblinWitcher : Monster
     void Start()
     {
         hp = 5f;
+        energy = 100f;
+        coinNum = 2;
+        magicStoneNum = 3;
         playerInRoom = true;
         strollTimeStamp = -5f;
         monsterState = MonsterState.Idle;
         anim = GetComponent<Animator>();
         intell = GetComponent<IntellFindPath>();
         weapon = weaponObj ? weaponObj.GetComponent<Weapon>() : null;
-        weapon.InstantiateWeapon(transform.tag);
+        if(weapon) weapon.InstantiateWeapon(transform.tag);
     }
 
     void Update()
@@ -104,7 +107,7 @@ public class GoblinWitcher : Monster
         {
             attackTimeStamp = Time.time;
             if (weapon != null)
-                weapon.Shoot();
+                weapon.Shoot(ref energy);
         }
         LookAt(target.position);
     }

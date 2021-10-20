@@ -17,6 +17,9 @@ public class Goblin_Gun : Monster
     void Start()
     {
         hp = 10f;
+        energy = 100f;
+        coinNum = 2;
+        magicStoneNum = 3;
         playerInRoom = true;
         strollTimeStamp = -5f;
         monsterState = MonsterState.Idle;
@@ -113,7 +116,7 @@ public class Goblin_Gun : Monster
         {
             attackTimeStamp = Time.time;
             if (weapon != null)
-                weapon.Shoot();
+                weapon.Shoot(ref energy);
         }
         LookAt(target.position);
     }

@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Bow : Weapon
 {
-    public override void Shoot()
+    public override void Shoot(ref float energy)
     {
-        if (Time.time - timeStamp >= shootCD)
+        if (Time.time - timeStamp >= shootCD && energy >= useEnergy)
         {
             timeStamp = Time.time;
+            energy -= useEnergy;
             InstantiateBullet();
             GetComponent<Animator>().SetTrigger("isAttack");
         }

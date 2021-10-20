@@ -9,11 +9,13 @@ public class KnightController : Creature, BeAttack
     public float defense;
     public float energy;
     public float speed;
+    public float coin;
 
     [Header("Affiliated")]
     public Slider bloodBar;
     public Slider defenseBar;
     public Slider energyBar;
+    public Text coinText;
     public List<GameObject> weaponObj;
     public GameObject weaponInFloorObj;
     public int curWeapon;
@@ -38,6 +40,7 @@ public class KnightController : Creature, BeAttack
         defenseBar.value = defense;
         energyBar.maxValue = energy;
         energyBar.value = energy;
+        coin = 0;
 
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
@@ -69,11 +72,10 @@ public class KnightController : Creature, BeAttack
         }
         if (Input.GetMouseButton(0) && weaponInFloorObj == null)
         {
-            weapon.Shoot();
-            energy -= weapon.energy;
+            weapon.Shoot(ref energy);
             energyBar.value = energy;
         }
-        if (Input.GetMouseButtonDown(2))     // 滚轮被点击
+        if (Input.GetKeyDown(KeyCode.C))     // 按C切换武器
         {
             SwitchWeapon();
         }
@@ -124,7 +126,8 @@ public class KnightController : Creature, BeAttack
     void GetWeapon()      
     {
         Weapon weaponFloor = weaponInFloorObj.GetComponent<Weapon>();
-        if (weaponObj[0] != null && weaponObj[1] != null && weaponFloor.role == "")
+        if (weaponFloor.role == "Monster") return;               // 不能捡起敌人武器
+        if (weaponObj[0] != null && weaponObj[1] != null)
         {
             // 放下现有的武器
             weaponObj[curWeapon].transform.SetParent(weaponInFloorObj.transform.parent);
@@ -152,5 +155,17 @@ public class KnightController : Creature, BeAttack
         {
             anim.SetBool("isDead", true);
         }
+    }
+
+    public void AddCoin()
+    {
+        coin += 1;
+        coinText.text = coin.ToString();
+    }
+
+    public void AddMagic()
+    {
+        energy += 5;
+        energyBar.value = energy > 100 ? 100 : energy;
     }
 }

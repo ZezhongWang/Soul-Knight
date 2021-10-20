@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2795819366802280163
+--- !u!1 &1285507051835904320
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,38 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2795819366802280165}
-  - component: {fileID: 2795819366802280167}
-  - component: {fileID: 2795819366802280162}
-  - component: {fileID: 2795819366802280164}
+  - component: {fileID: 1285507051835904321}
+  - component: {fileID: 1285507051835904324}
+  - component: {fileID: 1285507051835904327}
+  - component: {fileID: 1285507051835904326}
   m_Layer: 0
   m_Name: Gatllin
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2795819366802280165
+--- !u!4 &1285507051835904321
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795819366802280163}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.908754, y: -4.232428, z: 0}
+  m_GameObject: {fileID: 1285507051835904320}
+  m_LocalRotation: {x: 0, y: 0, z: 0.12476333, w: 0.99218655}
+  m_LocalPosition: {x: 28.01, y: 834.50415, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &2795819366802280167
+--- !u!61 &1285507051835904324
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795819366802280163}
+  m_GameObject: {fileID: 1285507051835904320}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -59,13 +59,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9375, y: 0.5625}
   m_EdgeRadius: 0
---- !u!212 &2795819366802280162
+--- !u!212 &1285507051835904327
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795819366802280163}
+  m_GameObject: {fileID: 1285507051835904320}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -109,22 +109,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2795819366802280164
+--- !u!114 &1285507051835904326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795819366802280163}
+  m_GameObject: {fileID: 1285507051835904320}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c680b0faf5b64429c62a84c4e24444, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   shootCD: 1.5
-  energy: 2
+  useEnergy: 0
   weaponName: "\u8FDE\u53D1\u67AA"
-  role: 
+  role: Untagged
   bulletPrefab: {fileID: 970928171292755241, guid: 80e2b4cc521c5f148a51a7459a068898,
     type: 3}
   dartleCD: 0.5

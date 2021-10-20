@@ -16,11 +16,12 @@ public class Gatlin : Weapon
 
     }
 
-    public override void Shoot()
+    public override void Shoot(ref float energy)
     {
-        if (Time.time - timeStamp >= shootCD)
+        if (Time.time - timeStamp >= shootCD && energy >=  useEnergy)
         {
             timeStamp = Time.time;
+            energy -= useEnergy;
             InstantiateBullet();
             Invoke("InstantiateBullet", dartleCD);
         }

@@ -6,7 +6,7 @@ public class Weapon : MonoBehaviour
 {
     [Header("Attributes")]
     public float shootCD;
-    public float energy;
+    public float useEnergy;
     public string weaponName;
     public string role;                 // 谁持有的武器
     public GameObject bulletPrefab;     // 子弹物体
@@ -18,11 +18,12 @@ public class Weapon : MonoBehaviour
         this.role = role;
     }
 
-    public virtual void Shoot()
+    public virtual void Shoot(ref float energy)
     {
-        if(Time.time - timeStamp >= shootCD)
+        if(Time.time - timeStamp >= shootCD && energy >= useEnergy)
         {
             timeStamp = Time.time;
+            energy -= useEnergy;
             InstantiateBullet();
         }
     }

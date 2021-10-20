@@ -17,15 +17,27 @@ public class Monster : Creature, BeAttack
     public float trackCD;
     public float attackRadius;
     public float attackCD;
+    public float energy;
     public GameObject weaponObj;                // Monster拥有的武器物体
     public Transform target;                    // 攻击目标
     public LayerMask layerMask;                 // 目标的LayerMask
+    public Room room;
+    public float coinNum;
+    public float magicStoneNum;
+    public GameObject coin;
+    public GameObject magicStone;
 
     protected Weapon weapon;
     protected RaycastHit2D hit;
     protected float strollTimeStamp;
     protected float trackTimeStamp;
     protected float attackTimeStamp;
+
+    public void InstantiateSelf(Room room)
+    {
+        this.room = room;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     public void BeAttack(float damage)
     {
@@ -35,6 +47,12 @@ public class Monster : Creature, BeAttack
             monsterState = MonsterState.Die;
             GetComponent<Animator>().SetBool("isDead", true);
             GetComponent<Collider2D>().enabled = false;
+
+            room.MonsterDie(this);
+            for (int i = 0; i < coinNum; i++)
+                Instantiate(coin, transform.position + Random.insideUnitSphere, Quaternion.identity);
+            for (int i = 0; i < magicStoneNum; i++)
+                Instantiate(magicStone, transform.position + Random.insideUnitSphere, Quaternion.identity);
         }
     }
 
