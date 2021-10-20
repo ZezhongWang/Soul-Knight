@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class KnightController : Creature, BeAttack
 {
@@ -9,6 +10,9 @@ public class KnightController : Creature, BeAttack
     public float defense;
     public float energy;
     public float speed;
+    public float skillVal;
+    public float skillSustainTime;
+    public float skillRecoverCD;
     public float coin;
 
     [Header("Affiliated")]
@@ -16,24 +20,34 @@ public class KnightController : Creature, BeAttack
     public Slider defenseBar;
     public Slider energyBar;
     public Text coinText;
+    public Slider skillBar;
     public List<GameObject> weaponObj;
     public GameObject weaponInFloorObj;
     public int curWeapon;
 
     // 组件
     private Animator anim;
+    private Animator skillAnim;
     private Rigidbody2D rigid;
 
     private Vector3 mousePosOnWorld;
     private Vector2 movement;
     private Weapon weapon;
+    private Weapon skillWeapon;
+    private Weapon handWeapon;
     private bool leftMouseClick;
+    private bool skillState;
+    private float skillRecoverTimeStamp;
+    private bool monsterNear;
 
     void Start()
     {
         hp = 200f;
         defense = 5f;
         energy = 100f;
+        skillVal = 100f;
+        skillRecoverCD = 0.2f;
+        skillSustainTime = 5f;
         bloodBar.maxValue = hp;
         bloodBar.value = hp;
         defenseBar.maxValue = defense;
@@ -41,43 +55,78 @@ public class KnightController : Creature, BeAttack
         energyBar.maxValue = energy;
         energyBar.value = energy;
         coin = 0;
-
+        skillBar.maxValue = skillVal;
+        skillBar.value = skillVal;
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         weapon = weaponObj[0].GetComponent<Weapon>();
         weapon.InstantiateWeapon(transform.tag);
-        curWeapon = 0; 
+        handWeapon = weaponObj[2].GetComponent<Weapon>();
+        handWeapon.InstantiateWeapon(transform.tag);
+        curWeapon = 0;
+        skillAnim = transform.Find("Skill").gameObject.GetComponent<Animator>();
+        skillWeapon = null;
     }
 
   
     void Update()
     {
+        if (hp <= 0) return;
+
         Move();
 
-        // 检测身边是否有枪
+        UpdateSKillVal();
+
+        // 检测身边是否有枪和怪物
+        monsterNear = false;
         weaponInFloorObj = null;
         Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, 1);
         for (int i = 0; i < cols.Length; i++)
         {
-            if (cols[i].CompareTag("Weapon"))
+            if (cols[i].CompareTag("Weapon") && cols[i].gameObject.GetComponent<Weapon>().role != "Monster")
             {
-                weaponInFloorObj = cols[i].gameObject;
-                break;
+                if(weaponInFloorObj == null) weaponInFloorObj = cols[i].gameObject;
+            }
+            if(cols[i].CompareTag("Monster"))
+            {
+                monsterNear = true;
             }
         }
+        // 技能恢复
+        if (Time.time - skillRecoverTimeStamp >= skillRecoverCD)
+        {
+            skillRecoverTimeStamp = Time.time;
+            skillVal++;
+            if (skillVal > 100)
+                skillVal = 100;
+        }
+
         leftMouseClick = Input.GetMouseButtonDown(0); 
+
         if (weaponInFloorObj != null && leftMouseClick)
         {
             GetWeapon();
         }
         if (Input.GetMouseButton(0) && weaponInFloorObj == null)
         {
-            weapon.Shoot(ref energy);
+            if(!monsterNear)
+            {
+                weapon.Shoot(ref energy);
+                if (skillWeapon) skillWeapon.Shoot(ref energy);
+            }
+            else handWeapon.Shoot(ref energy);
             energyBar.value = energy;
+
         }
         if (Input.GetKeyDown(KeyCode.C))     // 按C切换武器
         {
+            if (skillState) returnOrdinary();
             SwitchWeapon();
+        }
+        if(Input.GetMouseButtonDown(1) && skillVal == 100)
+        {
+            skill();
+            Invoke("returnOrdinary", skillSustainTime);
         }
     }
 
@@ -101,6 +150,8 @@ public class KnightController : Creature, BeAttack
         GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
         // weapon Direction
         weapon.LookAt(mousePosOnWorld);
+        handWeapon.LookAt(mousePosOnWorld);
+        if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
     }
 
     // 切换主副武器
@@ -143,7 +194,7 @@ public class KnightController : Creature, BeAttack
         }
         weaponFloor.PickUp(transform.tag);
         weaponInFloorObj.transform.SetParent(transform);
-        weaponInFloorObj.transform.localPosition = new Vector3(0.13f, -0.34f, 0);
+        weaponInFloorObj.transform.localPosition = new Vector3(-0.1f, -0.34f, 0);
         weaponInFloorObj.transform.localRotation = Quaternion.identity;
     }
 
@@ -154,6 +205,29 @@ public class KnightController : Creature, BeAttack
         if (hp <= 0)
         {
             anim.SetBool("isDead", true);
+            Invoke("ReturnToMainMenu", 2f);
+        }
+    }
+
+    public void skill()
+    {
+        skillVal = 0;
+        skillState = true;
+        skillAnim.Play("Fire");
+        GameObject skillWeaponObj = Instantiate(weaponObj[curWeapon], transform.position, Quaternion.identity);
+        skillWeaponObj.transform.SetParent(transform);
+        skillWeaponObj.transform.localPosition = new Vector3(0.5f, -0.34f, 0);
+        skillWeapon = skillWeaponObj.GetComponent<Weapon>();
+    }
+
+    public void returnOrdinary()
+    {
+        if(skillState)
+        {
+            skillState = false;
+            skillAnim.Play("Idle");
+            Destroy(skillWeapon.gameObject);
+            skillWeapon = null;
         }
     }
 
@@ -166,6 +240,24 @@ public class KnightController : Creature, BeAttack
     public void AddMagic()
     {
         energy += 5;
-        energyBar.value = energy > 100 ? 100 : energy;
+        if (energy > 100) energy = 100;
+        energyBar.value = energy;
+    }
+
+    public void AddHp()
+    {
+        hp += 5;
+        if (hp > 200) hp = 200;
+        bloodBar.value = hp;
+    }
+
+    public void UpdateSKillVal()
+    {
+        skillBar.value = skillVal;
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }

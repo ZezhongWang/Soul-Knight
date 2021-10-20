@@ -42,7 +42,8 @@ public class Monster : Creature, BeAttack
     public void BeAttack(float damage)
     {
         hp -= damage;
-        if(hp <= 0)
+        transform.position -= transform.up * 0.3f;
+        if (hp <= 0)
         {
             monsterState = MonsterState.Die;
             GetComponent<Animator>().SetBool("isDead", true);
@@ -77,7 +78,10 @@ public class Monster : Creature, BeAttack
     // 躲避
     public virtual void Elude() { }
 
-    public virtual void Die() { }
+    public virtual void Die() {
+        if (gameObject != null)
+            Destroy(gameObject, 3f);
+    }
 
     public bool RaycastDetection()
     {

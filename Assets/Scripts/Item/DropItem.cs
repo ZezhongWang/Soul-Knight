@@ -26,10 +26,12 @@ public class DropItem : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * speed);
         if (Vector3.Distance(transform.position, target.position) <= 0.5f)
         {
-            if(itemName == "coin")
+            if (itemName == "coin")
                 player.GetComponent<KnightController>().AddCoin();
-            else if(itemName == "magicStone")
+            else if (itemName == "magicStone" || itemName == "EnergyBottle")
                 player.GetComponent<KnightController>().AddMagic();
+            else if (itemName == "BloodBottle")
+                player.GetComponent<KnightController>().AddHp();
             Destroy(gameObject);
         }
     }

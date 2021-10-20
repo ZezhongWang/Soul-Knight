@@ -33,7 +33,8 @@ public class RoomMonster : Room
             if (round == 0 && monsters.Count == 0)
             {
                 isExplored = true;
-                Instantiate(treasureBox, treasureHatch.transform.position, Quaternion.identity);
+                if(treasureBox)
+                    Instantiate(treasureBox, treasureHatch.transform.position, Quaternion.identity);
                 OpenDoor();
             }
         }

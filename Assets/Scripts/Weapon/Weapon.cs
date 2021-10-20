@@ -34,7 +34,7 @@ public class Weapon : MonoBehaviour
         bullet.GetComponent<Bullet>().Instantiation(role);
     }
 
-    public void LookAt(Vector3 target)
+    public virtual void LookAt(Vector3 target)
     {
         transform.right = (target - transform.position).normalized;
         GetComponent<SpriteRenderer>().flipY = target.x < transform.position.x;

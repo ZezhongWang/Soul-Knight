@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4582399130371438002}
+  - component: {fileID: 41852539530353825}
   - component: {fileID: 4582399130371438003}
   - component: {fileID: 4582399130371438000}
   - component: {fileID: 4582399130371438001}
@@ -37,6 +38,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &41852539530353825
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582399130371437998}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!61 &4582399130371438003
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -174,7 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextPosition: {x: 0, y: 0, z: 0}
   speed: 5
-  nextWaypointDistance: 1
+  nextWaypointDistance: 2
   reachPathEnd: 0
 --- !u!114 &4582399130371438005
 MonoBehaviour:
@@ -191,17 +213,24 @@ MonoBehaviour:
   hp: 0
   monsterState: 0
   playerInRoom: 1
-  strollRadius: 5
-  strollCD: 2
+  strollRadius: 6
+  strollCD: 1.5
   trackRadius: 4
   trackCD: 1
   attackRadius: 2
   attackCD: 1
+  energy: 0
   weaponObj: {fileID: 4582399130533086791}
   target: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 512
+  room: {fileID: 0}
+  coinNum: 0
+  magicStoneNum: 0
+  coin: {fileID: 447403762322475582, guid: 9603456d8bc794c46b135612ee66cf41, type: 3}
+  magicStone: {fileID: 1748464707757747974, guid: 1cfae00a0fcd0a84fac1f7031fc390ab,
+    type: 3}
 --- !u!1001 &2019363609834331222
 PrefabInstance:
   m_ObjectHideFlags: 0

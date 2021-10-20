@@ -11,11 +11,6 @@ public class Gatlin : Weapon
 {
     public float dartleCD;      // 连射CD
 
-    void Start()
-    {
-
-    }
-
     public override void Shoot(ref float energy)
     {
         if (Time.time - timeStamp >= shootCD && energy >=  useEnergy)

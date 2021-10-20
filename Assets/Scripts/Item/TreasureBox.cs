@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class TreasureBox : MonoBehaviour
 {
-    public GameObject weaponObj;
+    public GameObject obj;
     private Animator anim;
 
     void Start()
     {
         anim = GetComponent<Animator>();
-        weaponObj.SetActive(false);
+        obj.SetActive(false);
     }
 
     public void OnTriggerEnter2D(Collider2D collider)
@@ -18,7 +18,7 @@ public class TreasureBox : MonoBehaviour
         if(collider.transform.tag == "Player")
         {
             anim.Play("Open");
-            weaponObj.SetActive(true);
+            obj.SetActive(true);
         }
     }
 }
