@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviour
     public float shootCD;
     public float useEnergy;
     public string weaponName;
+    public string sfxPath;
     public string role;                 // 谁持有的武器
     public GameObject bulletPrefab;     // 子弹物体
 
@@ -25,6 +26,7 @@ public class Weapon : MonoBehaviour
             timeStamp = Time.time;
             energy -= useEnergy;
             InstantiateBullet();
+            FMODUnity.RuntimeManager.PlayOneShot("event:/Weapons/" + sfxPath, GetComponent<Transform>().position); 
         }
     }
 

@@ -22,6 +22,7 @@ public class KnightController : Creature, BeAttack
     public Text coinText;
     public Slider skillBar;
     public List<GameObject> weaponObj;
+    public List<Weapon> weapons;
     public GameObject weaponInFloorObj;
     public int curWeapon;
 
@@ -157,20 +158,34 @@ public class KnightController : Creature, BeAttack
     // 切换主副武器
     void SwitchWeapon()
     {
-        if (weaponObj[1] == null) return;
-        switch(curWeapon) {
-            case 0:
-                curWeapon = 1;
-                weaponObj[0].GetComponent<Weapon>().PutAway();
-                weaponObj[1].GetComponent<Weapon>().TakeOut();
-                break;
-            case 1:
-                curWeapon = 0;
-                weaponObj[0].GetComponent<Weapon>().TakeOut();
-                weaponObj[1].GetComponent<Weapon>().PutAway();
-                break;
-        }
-        weapon = weaponObj[curWeapon].GetComponent<Weapon>();
+        curWeapon = (curWeapon + 1) % weapons.Count;
+        SwitchToWeapon(curWeapon);
+
+        //if (weaponObj[1] == null) return;
+        //switch (curWeapon)
+        //{
+        //    case 0:
+        //        curWeapon = 1;
+        //        weaponObj[0].GetComponent<Weapon>().PutAway();
+        //        weaponObj[1].GetComponent<Weapon>().TakeOut();
+        //        break;
+        //    case 1:
+        //        curWeapon = 0;
+        //        weaponObj[0].GetComponent<Weapon>().TakeOut();
+        //        weaponObj[1].GetComponent<Weapon>().PutAway();
+        //        break;
+        //}
+        //weapon = weaponObj[curWeapon].GetComponent<Weapon>();
+    }
+
+    void SwitchToWeapon(int index)
+    {
+        Destroy(weapon.gameObject);
+        weapon = Instantiate(weapons[index], transform);
+        weapon.PickUp(transform.tag);
+        weapon.transform.SetParent(transform);
+        weapon.transform.localPosition = new Vector3(-0.1f, -0.34f, 0);
+        weapon.transform.localRotation = Quaternion.identity;
     }
 
     // 捡起地面的武器

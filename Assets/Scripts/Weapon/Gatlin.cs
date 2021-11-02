@@ -19,6 +19,7 @@ public class Gatlin : Weapon
             energy -= useEnergy;
             InstantiateBullet();
             Invoke("InstantiateBullet", dartleCD);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/Weapons/" + sfxPath, GetComponent<Transform>().position);
         }
     }
 }
