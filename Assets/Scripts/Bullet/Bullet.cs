@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     public float force;             //  子弹射出的力
     protected string role;          //  谁射出的子弹
     public float damage;            //  对敌伤害
+    public float destroyTime = 0.05f;
     public GameObject hitEffect;    //  命中后的特效
 
    protected virtual void OnTriggerEnter2D(Collider2D collision)
@@ -32,7 +33,7 @@ public class Bullet : MonoBehaviour
         if(hitEffect != null)
         {
             GameObject hit = Instantiate(hitEffect, transform.position, Quaternion.identity);
-            Destroy(hit, 0.05f);
+            Destroy(hit, destroyTime);
         }
     }
 
