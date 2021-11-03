@@ -28447,6 +28447,12 @@ PrefabInstance:
       propertyPath: myEventListeners.Array.data[0]
       value: 
       objectReference: {fileID: 1845134510}
+    - target: {fileID: 484319349946170942, guid: 8595f0764810a614892c69b124c77240,
+        type: 3}
+      propertyPath: myEventListeners.Array.data[1]
+      value: 
+      objectReference: {fileID: 2913722816667509911, guid: 30fdc775f5e35704f981c530a17af9c5,
+        type: 3}
     - target: {fileID: 484319349946170943, guid: 8595f0764810a614892c69b124c77240,
         type: 3}
       propertyPath: m_RootOrder
@@ -31823,6 +31829,9 @@ MonoBehaviour:
   skillVal: 0
   skillSustainTime: 0
   skillRecoverCD: 0
+  dashCD: 2
+  dashTime: 0.15
+  dashSpeed: 3
   coin: 0
   bloodBar: {fileID: 144256719}
   defenseBar: {fileID: 1012177474}
@@ -31838,8 +31847,11 @@ MonoBehaviour:
   - {fileID: -4414211693388747343, guid: b494c2c6266f5a948a6f82bd7fd5c6e1, type: 3}
   - {fileID: -4436708998034292234, guid: 33700d94d0e9ae541b32477cec4fef05, type: 3}
   - {fileID: 5093213028599963794, guid: c72d2c891dd619d4da2fcaf256b81b94, type: 3}
+  - {fileID: 2779159050499498716, guid: e44d3203a1949be439195ae29d6ab61e, type: 3}
   weaponInFloorObj: {fileID: 0}
   curWeapon: 0
+  beatSpeed: 2
+  errorMargin: 0.1
 --- !u!50 &1845134511
 Rigidbody2D:
   serializedVersion: 4

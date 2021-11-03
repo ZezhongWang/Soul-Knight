@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 
-public class Boss : Monster
+public class Boss : Monster, IEasyListener
 {
     private Animator anim;
     private IntellFindPath intell;
@@ -12,6 +12,7 @@ public class Boss : Monster
 
     void Start()
     {
+        hp = 100000;
         energy = 100f;
         coinNum = 2;
         magicStoneNum = 3;
@@ -37,7 +38,7 @@ public class Boss : Monster
             case MonsterState.Stroll:
                 Stroll();
                 break;
-            case MonsterState.Attack:
+            case MonsterState.Attack:     // music control
                 Attack();
                 break;
             case MonsterState.Die:
@@ -107,8 +108,10 @@ public class Boss : Monster
         if (Time.time - attackTimeStamp >= attackCD)
         {
             attackTimeStamp = Time.time;
-            if (weapon != null)
+            if (weapon != null) {
                 weapon.Shoot(ref energy);
+            }
+                
         }
         if (Time.time - summonTimeStamp >= summonCD)
         {
@@ -117,5 +120,10 @@ public class Boss : Monster
         }
 
         LookAt(target.position);
+    }
+
+    public void OnBeat(EasyEvent currentAudioEvent)
+    {
+        Attack();
     }
 }

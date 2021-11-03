@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d91b885f66f5504799220dcd873e06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootCD: 0.5
+  shootCD: 0.2
   useEnergy: 0
   weaponName: 
   sfxPath: fx_gun_2

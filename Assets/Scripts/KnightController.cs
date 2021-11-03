@@ -16,6 +16,9 @@ public class KnightController : Creature, BeAttack, IEasyListener
     public float skillVal;
     public float skillSustainTime;
     public float skillRecoverCD;
+    public float dashCD;
+    public float dashTime;
+    public float dashSpeed;
     public float coin;
 
     [Header("Affiliated")]
@@ -28,7 +31,8 @@ public class KnightController : Creature, BeAttack, IEasyListener
     public List<Weapon> weapons;
     public GameObject weaponInFloorObj;
     public int curWeapon;
-
+    public float beatSpeed;
+    public float errorMargin;
     // 组件
     private Animator anim;
     private Animator skillAnim;
@@ -40,10 +44,16 @@ public class KnightController : Creature, BeAttack, IEasyListener
     private Weapon skillWeapon;
     private Weapon handWeapon;
     private bool leftMouseClick;
+    private bool rightMouseClick;
+    private bool isDashing;
     private bool skillState;
     private float skillRecoverTimeStamp;
     private bool monsterNear;
-
+    private float dashStartTimeStamp;
+    private float LastDashTimeStamp;
+    private float LastBeatTimeStamp;
+    private int LastBeat;
+    private int LastMoveBeat;
     void Awake()
     {
         Instance = this;
@@ -51,7 +61,7 @@ public class KnightController : Creature, BeAttack, IEasyListener
 
     void Start()
     {
-        hp = 200f;
+        hp = 1000f;
         defense = 5f;
         energy = 100f;
         skillVal = 100f;
@@ -77,7 +87,7 @@ public class KnightController : Creature, BeAttack, IEasyListener
         skillWeapon = null;
     }
 
-  
+
     void Update()
     {
         if (hp <= 0) return;
@@ -94,9 +104,9 @@ public class KnightController : Creature, BeAttack, IEasyListener
         {
             if (cols[i].CompareTag("Weapon") && cols[i].gameObject.GetComponent<Weapon>().role != "Monster")
             {
-                if(weaponInFloorObj == null) weaponInFloorObj = cols[i].gameObject;
+                if (weaponInFloorObj == null) weaponInFloorObj = cols[i].gameObject;
             }
-            if(cols[i].CompareTag("Monster"))
+            if (cols[i].CompareTag("Monster"))
             {
                 monsterNear = true;
             }
@@ -110,7 +120,14 @@ public class KnightController : Creature, BeAttack, IEasyListener
                 skillVal = 100;
         }
 
-        leftMouseClick = Input.GetMouseButtonDown(0); 
+        leftMouseClick = Input.GetMouseButtonDown(0);
+        rightMouseClick = Input.GetMouseButtonDown(1);
+        if (rightMouseClick && Time.time - LastDashTimeStamp >= dashCD)
+        {
+            isDashing = true;
+            dashStartTimeStamp = Time.time;
+            this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        }
 
         if (weaponInFloorObj != null && leftMouseClick)
         {
@@ -118,7 +135,7 @@ public class KnightController : Creature, BeAttack, IEasyListener
         }
         if ((Input.GetKeyDown(KeyCode.J) || Input.GetMouseButton(0)) && weaponInFloorObj == null)
         {
-            if(!monsterNear)
+            if (!monsterNear)
             {
                 weapon.Shoot(ref energy);
                 if (skillWeapon) skillWeapon.Shoot(ref energy);
@@ -132,7 +149,7 @@ public class KnightController : Creature, BeAttack, IEasyListener
             if (skillState) returnOrdinary();
             SwitchWeapon();
         }
-        if(Input.GetMouseButtonDown(1) && skillVal == 100)
+        if (Input.GetKeyDown(KeyCode.Q) && skillVal == 100)
         {
             skill();
             Invoke("returnOrdinary", skillSustainTime);
@@ -142,7 +159,28 @@ public class KnightController : Creature, BeAttack, IEasyListener
 
     void FixedUpdate()
     {
-        rigid.MovePosition(rigid.position + movement * speed * Time.fixedDeltaTime);
+        float velocity = speed;
+        if (isDashing)
+        {
+            if (Time.time - dashStartTimeStamp > dashTime)
+            {
+                isDashing = false;
+                this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+            }
+            else velocity = dashSpeed * speed;
+        }
+        //rigid.MovePosition(rigid.position + movement * velocity * Time.fixedDeltaTime);
+        if ((Time.time - LastBeatTimeStamp < errorMargin || LastBeatTimeStamp + 0.5 - Time.time < errorMargin) &&
+             movement != new Vector2(0, 0))
+        {
+            int curMoveBeat = LastBeat;
+            if (LastBeatTimeStamp + 0.5 - Time.time < errorMargin) curMoveBeat = LastBeat + 1;
+            if (curMoveBeat > LastMoveBeat)
+            {
+                rigid.MovePosition(rigid.position + movement * beatSpeed);
+                LastMoveBeat = curMoveBeat;
+            }
+        }
     }
 
     void Move()
@@ -156,24 +194,24 @@ public class KnightController : Creature, BeAttack, IEasyListener
         // Player Direction
         Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
 
-        if (room != null)
-        {
-            Transform monsterTrans = room.GetNearestMonster();
-            //Vector3 monsterPos = monsterTrans == null? rigid
-            if (monsterTrans != null)
-            {
-                weapon.LookAt(monsterTrans.position);
-                handWeapon.LookAt(monsterTrans.position);
-            }
-        }
-        
-        //Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
-        //mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
-        //GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
-        //// weapon Direction
-        //weapon.LookAt(mousePosOnWorld);
-        //handWeapon.LookAt(mousePosOnWorld);
-        //if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
+        //if (room != null)
+        //{
+        //    Transform monsterTrans = room.GetNearestMonster();
+        //    //Vector3 monsterPos = monsterTrans == null? rigid
+        //    if (monsterTrans != null)
+        //    {
+        //        weapon.LookAt(monsterTrans.position);
+        //        handWeapon.LookAt(monsterTrans.position);
+        //    }
+        //}
+
+        Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
+        mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
+        GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
+        // weapon Direction
+        weapon.LookAt(mousePosOnWorld);
+        handWeapon.LookAt(mousePosOnWorld);
+        if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
     }
 
     // 切换主副武器
@@ -202,7 +240,41 @@ public class KnightController : Creature, BeAttack, IEasyListener
     public void OnBeat(EasyEvent audioEvent)
     {
         weapon.Shoot(ref energy);
+        LastBeatTimeStamp = Time.time;
+        LastBeat = ((int)audioEvent.CurrentTimelinePosition) / 500;
     }
+
+    public void ChgWeapon0(EasyEvent audioEvent)
+    {
+        SwitchToWeapon(0);
+        weapon.Shoot(ref energy);
+    }
+    public void ChgWeapon1(EasyEvent audioEvent)
+    {
+        SwitchToWeapon(1);
+        weapon.Shoot(ref energy);
+    }
+    public void ChgWeapon2(EasyEvent audioEvent)
+    {
+        SwitchToWeapon(2);
+        weapon.Shoot(ref energy);
+    }
+    public void ChgWeapon3(EasyEvent audioEvent)
+    {
+        SwitchToWeapon(3);
+        weapon.Shoot(ref energy);
+    }
+    public void ChgWeapon4(EasyEvent audioEvent)
+    {
+        SwitchToWeapon(4);
+        weapon.Shoot(ref energy);
+    }
+
+    public void PowerUp(EasyEvent audioEvent)
+    {
+        skill();
+    }
+
 
     void SwitchToWeapon(int index)
     {
@@ -212,6 +284,13 @@ public class KnightController : Creature, BeAttack, IEasyListener
         weapon.transform.SetParent(transform);
         weapon.transform.localPosition = new Vector3(-0.1f, -0.34f, 0);
         weapon.transform.localRotation = Quaternion.identity;
+
+
+        //Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+        //mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
+        //GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
+        //// weapon Direction
+        //weapon.LookAt(mousePosOnWorld);
     }
 
     // 捡起地面的武器

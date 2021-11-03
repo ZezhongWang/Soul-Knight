@@ -217,10 +217,10 @@ MonoBehaviour:
   playerInRoom: 0
   strollRadius: 5
   strollCD: 2
-  trackRadius: 5
-  trackCD: 1.5
-  attackRadius: 5
-  attackCD: 3
+  trackRadius: 20
+  trackCD: 0.5
+  attackRadius: 15
+  attackCD: 1
   energy: 0
   weaponObj: {fileID: 2615235709804945219}
   target: {fileID: 0}
@@ -233,7 +233,7 @@ MonoBehaviour:
   coin: {fileID: 447403762322475582, guid: 9603456d8bc794c46b135612ee66cf41, type: 3}
   magicStone: {fileID: 1748464707757747974, guid: 1cfae00a0fcd0a84fac1f7031fc390ab,
     type: 3}
-  summonCD: 7
+  summonCD: 20
 --- !u!1001 &3694109370032183103
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -241,6 +241,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2615235709306745682}
     m_Modifications:
+    - target: {fileID: 1661603840876791873, guid: 175560b59f9a4c840b042f39502c99c7,
+        type: 3}
+      propertyPath: useEnergy
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1661603840876791874, guid: 175560b59f9a4c840b042f39502c99c7,
         type: 3}
       propertyPath: m_RootOrder
