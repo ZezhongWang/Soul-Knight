@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class KnightController : Creature, BeAttack
+public class KnightController : Creature, BeAttack, IEasyListener
 {
     public static KnightController Instance { get; private set; }
     public Room room { get; set; }
@@ -197,6 +197,11 @@ public class KnightController : Creature, BeAttack
         //        break;
         //}
         //weapon = weaponObj[curWeapon].GetComponent<Weapon>();
+    }
+
+    public void OnBeat(EasyEvent audioEvent)
+    {
+        weapon.Shoot(ref energy);
     }
 
     void SwitchToWeapon(int index)

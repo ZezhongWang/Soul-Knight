@@ -11,15 +11,15 @@ public class SongMgr : MonoBehaviour
     void Start()
     {
         isPlaying = false;
+        //FMODUnity.RuntimeManager.PlayOneShot("event:/BG/" + bgm);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.anyKeyDown && !isPlaying)
-        {
-            FMODUnity.RuntimeManager.PlayOneShot("event:/BG/" + bgm);
-            isPlaying = true;
-        }
+        //if (Input.anyKeyDown && !isPlaying)
+        //{
+        //    isPlaying = true;
+        //}
     }
 }
