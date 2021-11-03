@@ -28,9 +28,16 @@ public class Room : MonoBehaviour
             if(!isExplored)
             {
                 Invoke("CloseDoor", 0.5f);
+                KnightController.Instance.room = this;
             }
         }
     }
 
     public virtual void MonsterDie(Monster monster) { }
+
+
+    public virtual Transform GetNearestMonster()
+    {
+        return null;
+    }
 }

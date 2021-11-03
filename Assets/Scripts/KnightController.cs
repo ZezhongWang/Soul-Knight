@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class KnightController : Creature, BeAttack
 {
+    public static KnightController Instance { get; private set; }
+    public Room room { get; set; }
+
     [Header("Attributes")]
     public float defense;
     public float energy;
@@ -40,6 +43,11 @@ public class KnightController : Creature, BeAttack
     private bool skillState;
     private float skillRecoverTimeStamp;
     private bool monsterNear;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -108,7 +116,7 @@ public class KnightController : Creature, BeAttack
         {
             GetWeapon();
         }
-        if (Input.GetMouseButton(0) && weaponInFloorObj == null)
+        if ((Input.GetKeyDown(KeyCode.J) || Input.GetMouseButton(0)) && weaponInFloorObj == null)
         {
             if(!monsterNear)
             {
@@ -131,6 +139,7 @@ public class KnightController : Creature, BeAttack
         }
     }
 
+
     void FixedUpdate()
     {
         rigid.MovePosition(rigid.position + movement * speed * Time.fixedDeltaTime);
@@ -146,13 +155,25 @@ public class KnightController : Creature, BeAttack
             anim.SetBool("isRun", true);
         // Player Direction
         Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
-        mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
-        GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
-        // weapon Direction
-        weapon.LookAt(mousePosOnWorld);
-        handWeapon.LookAt(mousePosOnWorld);
-        if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
+
+        if (room != null)
+        {
+            Transform monsterTrans = room.GetNearestMonster();
+            //Vector3 monsterPos = monsterTrans == null? rigid
+            if (monsterTrans != null)
+            {
+                weapon.LookAt(monsterTrans.position);
+                handWeapon.LookAt(monsterTrans.position);
+            }
+        }
+        
+        //Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
+        //mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
+        //GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
+        //// weapon Direction
+        //weapon.LookAt(mousePosOnWorld);
+        //handWeapon.LookAt(mousePosOnWorld);
+        //if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
     }
 
     // 切换主副武器

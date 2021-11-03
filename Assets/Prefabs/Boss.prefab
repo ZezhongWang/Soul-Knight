@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2615235709306745683}
   - component: {fileID: 2615235709306745678}
   - component: {fileID: 2615235709306745677}
-  - component: {fileID: 2615235709306745676}
+  - component: {fileID: 2913722816667509911}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Monster
@@ -200,7 +200,7 @@ MonoBehaviour:
   speed: 4
   nextWaypointDistance: 2
   reachPathEnd: 0
---- !u!114 &2615235709306745676
+--- !u!114 &2913722816667509911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -209,12 +209,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2615235709306745680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba9a2fb359fe9f54a97cc4274ef9d15f, type: 3}
+  m_Script: {fileID: 11500000, guid: fdaac7450a1dc8f4180404318919fd5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
+  hp: 100
   monsterState: 0
-  playerInRoom: 1
+  playerInRoom: 0
   strollRadius: 5
   strollCD: 2
   trackRadius: 5
@@ -233,6 +233,7 @@ MonoBehaviour:
   coin: {fileID: 447403762322475582, guid: 9603456d8bc794c46b135612ee66cf41, type: 3}
   magicStone: {fileID: 1748464707757747974, guid: 1cfae00a0fcd0a84fac1f7031fc390ab,
     type: 3}
+  summonCD: 7
 --- !u!1001 &3694109370032183103
 PrefabInstance:
   m_ObjectHideFlags: 0
