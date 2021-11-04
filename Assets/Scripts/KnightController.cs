@@ -133,7 +133,8 @@ public class KnightController : Creature, BeAttack, IEasyListener
         {
             GetWeapon();
         }
-        if ((Input.GetKeyDown(KeyCode.J) || Input.GetMouseButton(0)) && weaponInFloorObj == null)
+        //if ((Input.GetKeyDown(KeyCode.J) || Input.GetMouseButton(0)) && weaponInFloorObj == null)
+        if (Input.GetMouseButton(0) && weaponInFloorObj == null)
         {
             if (!monsterNear)
             {
@@ -194,24 +195,24 @@ public class KnightController : Creature, BeAttack, IEasyListener
         // Player Direction
         Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
 
-        //if (room != null)
-        //{
-        //    Transform monsterTrans = room.GetNearestMonster();
-        //    //Vector3 monsterPos = monsterTrans == null? rigid
-        //    if (monsterTrans != null)
-        //    {
-        //        weapon.LookAt(monsterTrans.position);
-        //        handWeapon.LookAt(monsterTrans.position);
-        //    }
-        //}
+        if (room != null)
+        {
+            Transform monsterTrans = room.GetNearestMonster();
+            //Vector3 monsterPos = monsterTrans == null? rigid
+            if (monsterTrans != null)
+            {
+                weapon.LookAt(monsterTrans.position);
+                handWeapon.LookAt(monsterTrans.position);
+            }
+        }
 
-        Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
-        mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
-        GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
-        // weapon Direction
-        weapon.LookAt(mousePosOnWorld);
-        handWeapon.LookAt(mousePosOnWorld);
-        if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
+        //Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, pos.z);
+        //mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
+        //GetComponent<SpriteRenderer>().flipX = transform.position.x >= mousePosOnWorld.x;
+        //// weapon Direction
+        //weapon.LookAt(mousePosOnWorld);
+        //handWeapon.LookAt(mousePosOnWorld);
+        //if (skillWeapon) skillWeapon.LookAt(mousePosOnWorld);
     }
 
     // 切换主副武器
@@ -285,6 +286,16 @@ public class KnightController : Creature, BeAttack, IEasyListener
         weapon.transform.localPosition = new Vector3(-0.1f, -0.34f, 0);
         weapon.transform.localRotation = Quaternion.identity;
 
+        if (room != null)
+        {
+            Transform monsterTrans = room.GetNearestMonster();
+            //Vector3 monsterPos = monsterTrans == null? rigid
+            if (monsterTrans != null)
+            {
+                weapon.LookAt(monsterTrans.position);
+                handWeapon.LookAt(monsterTrans.position);
+            }
+        }
 
         //Vector3 mousePosOnScreen = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         //mousePosOnWorld = Camera.main.ScreenToWorldPoint(mousePosOnScreen);
